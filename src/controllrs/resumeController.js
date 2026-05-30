@@ -1,4 +1,3 @@
-import fs from "fs";
 import extractTextFromPDF from "../services/pdfService.js";
 import analyzeResume from "../services/aiServices.js";
 import { saveResume, fetchAllResumes, fetchResumeById, removeResume } from "../services/resumeServices.js";
@@ -11,11 +10,10 @@ const uploadResumeController = async (req, res, next) => {
   }
 
   try {
-    const extractedText = await extractTextFromPDF(req.file.path);
+    const extractedText = await extractTextFromPDF(req.file.buffer);
     const analysis      = await analyzeResume(extractedText);
 
     if (!analysis.isResume) {
-      fs.unlink(req.file.path, () => {});
       res.status(422);
       return next(new Error("The uploaded file does not appear to be a resume or CV. Please upload a valid resume."));
     }
@@ -40,7 +38,6 @@ const uploadResumeController = async (req, res, next) => {
       },
     });
   } catch (err) {
-    fs.unlink(req.file.path, () => {});
     next(err);
   }
 };
@@ -85,7 +82,6 @@ const deleteResume = async (req, res, next) => {
       return next(new Error("Resume not found"));
     }
 
-    fs.unlink(resume.filePath, () => {});
     res.json({ success: true, message: "Resume deleted" });
   } catch (err) {
     if (err.name === "CastError") {

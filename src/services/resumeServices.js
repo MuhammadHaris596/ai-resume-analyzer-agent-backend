@@ -3,8 +3,6 @@ import Resume from "../models/Resume.js";
 const saveResume = async ({ file, extractedText, analysis }) => {
   const resume = await Resume.create({
     filename:        file.originalname,
-    storedName:      file.filename,
-    filePath:        file.path,
     fileSize:        file.size,
     mimeType:        file.mimetype,
     extractedText,
@@ -22,13 +20,13 @@ const saveResume = async ({ file, extractedText, analysis }) => {
 
 const fetchAllResumes = async () => {
   return Resume.find()
-    .select("-filePath -storedName -extractedText")
+    .select("-extractedText")
     .sort({ createdAt: -1 })
     .limit(20);
 };
 
 const fetchResumeById = async (id) => {
-  return Resume.findById(id).select("-filePath -storedName");
+  return Resume.findById(id);
 };
 
 const removeResume = async (id) => {

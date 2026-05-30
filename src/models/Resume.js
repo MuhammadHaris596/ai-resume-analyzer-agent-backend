@@ -12,8 +12,6 @@ const resumeSchema = new mongoose.Schema(
   {
     // File info
     filename:      { type: String, required: true },
-    storedName:    { type: String, required: true },
-    filePath:      { type: String, required: true },
     fileSize:      { type: Number, required: true },
     mimeType:      { type: String, required: true },
 

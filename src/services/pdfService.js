@@ -1,13 +1,11 @@
-import fs from "fs/promises";
-import { PDFParse } from "pdf-parse";
+// Import from the internal path to skip pdf-parse's startup test,
+// which triggers pdfjs-dist's browser-only canvas/DOMMatrix requirement.
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
 
-const extractTextFromPDF = async (filePath) => {
-  const buffer = await fs.readFile(filePath);
-  const parser = new PDFParse({ data: buffer, verbosity: 0 });
-  const result = await parser.getText();
-  await parser.destroy();
+const extractTextFromPDF = async (buffer) => {
+  const data = await pdfParse(buffer);
 
-  const cleanText = result.text
+  const cleanText = data.text
     .replace(/\r\n/g, "\n")
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")
